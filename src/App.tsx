@@ -2,25 +2,41 @@ import { ComponentProps, useEffect, useState } from "react";
 import { Combobox as HCombobox } from "@headlessui/react";
 
 export function App() {
-  const [defaultValue, setDefaultValue] = useState({
-    value: "100",
-    label: "default",
-  });
+  // const [defaultValue, setDefaultValue] = useState({
+  //   value: "100",
+  //   label: "default",
+  // });
 
-  useEffect(() => {
-    const timeout = setTimeout(
-      () => setDefaultValue({ value: "200", label: "new value" }),
-      10000
-    );
-    return () => clearTimeout(timeout);
-  }, [setDefaultValue]);
+  // useEffect(() => {
+  //   const timeout = setTimeout(
+  //     () => setDefaultValue({ value: "200", label: "new value" }),
+  //     10000
+  //   );
+  //   return () => clearTimeout(timeout);
+  // }, [setDefaultValue]);
 
   return (
     <Combobox
       name="uncontrolled-combobox"
-      defaultValue={defaultValue}
+      defaultValue={{
+        value: "100",
+        label: "default",
+      }}
       placeholder="Search"
-      options={[defaultValue]}
+      options={[
+        {
+          value: "100",
+          label: "default",
+        },
+        {
+          value: "200",
+          label: "new value",
+        },
+        {
+          value: "300",
+          label: "3 houndreds",
+        },
+      ]}
     />
   );
 }
@@ -40,18 +56,13 @@ export function Combobox({
   ...comboboxProps
 }: ComboboxProps<OptionProps>) {
   return (
-    <HCombobox<OptionProps>
-      // 2023-08-14: Combobox struggles with generics, and thinks `nullable` (and
-      // `multiple`) can't be true for some reason.
-      // @ts-expect-error: type 'boolean' is not assignable to type 'false' [2769]
-      nullable
-      {...comboboxProps}
-    >
+    <HCombobox<OptionProps> {...comboboxProps}>
       <HCombobox.Input<OptionProps["value"]>
         displayValue={(value) =>
-          options.find((item) => item.value === value)?.label ?? ""
+          options.find((item) => item.value === value)?.label ??
+          (comboboxProps.defaultValue?.label as string)
         }
-        placeholder={placeholder}
+        // placeholder={placeholder}
       />
       <HCombobox.Options>
         {options.length > 0 ? (
